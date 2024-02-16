@@ -35,7 +35,9 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
          * Constructs a new Node<K> with the given values for fields.
          */
         public Node(K data, Node<K> left, Node<K> right) {
-            // delete this line and add your code
+            this.data = data;
+            this.left = left;
+            this.right = right;
         }
 
         /*
@@ -61,7 +63,36 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
          * actually changed. This function *must* run in O(1) time.
          */
         protected boolean updateHeight() {
-            return true;  // delete this line and add your code
+            /*
+             * need to add something here to check to make sure the height
+             * even needs to be changed
+             */
+
+            if(this.left != null){
+                if(this.right != null){
+                    if(this.left.height > this.right.height){
+                        this.height = this.left.height + 1;
+                        return true;
+                    }
+                    this.height = this.right.height + 1;
+                    return true;
+                }
+                this.height = this.left.height + 1;
+                return true;
+            }
+
+            /*
+                not sure if this works since one can be null then get compared the other
+                which would throw exceptions
+            if((this.left != null || this.right != null ) ){
+                if(this.left.height > this.right.height){
+                    this.height = this.left.height + 1;
+                    return true;
+                }
+
+            }*/
+
+            return false;
         }
 
         /**
