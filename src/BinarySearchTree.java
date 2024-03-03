@@ -1,4 +1,3 @@
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiPredicate;
 
@@ -64,12 +63,15 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
          */
         protected boolean updateHeight() {
             /*
-             * need to add something here to check to make sure the height
-             * even needs to be changed
+             * added if statements to check if height needs changed at all i think?
+             * should work how i think they do
              */
 
             if(this.left != null){
                 if(this.right != null){
+                    if(this.height == this.right.height - 1){
+                        return false;
+                    }
                     if(this.left.height > this.right.height){
                         this.height = this.left.height + 1;
                         return true;
@@ -77,20 +79,12 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
                     this.height = this.right.height + 1;
                     return true;
                 }
+                if(this.height == this.left.height - 1){
+                    return false;
+                }
                 this.height = this.left.height + 1;
                 return true;
             }
-
-            /*
-                not sure if this works since one can be null then get compared the other
-                which would throw exceptions
-            if((this.left != null || this.right != null ) ){
-                if(this.left.height > this.right.height){
-                    this.height = this.left.height + 1;
-                    return true;
-                }
-
-            }*/
 
             return false;
         }
@@ -103,7 +97,38 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
          */
         @Override
         public Location<K> previous() {
-            return null;  // delete this line and add your code
+            if(this.left != null){
+                return this.left.last();
+            }
+            else{
+                return this.prevAncestor();
+            }
+        }
+
+        /**
+         * helper function for previous()
+         *
+         * @return the Node<K> that is the prev. ancestor wrt. inorder traversal
+         */
+        public Node<K> prevAncestor(){
+            Node<K> n = this;
+            while(n.parent != null && n == n.parent.left){
+                n = n.parent;
+            }
+            return n;
+        }
+
+        /**
+         * helper function for previous()
+         *
+         * @return the last Node<K> of the subtree wrt. inorder traversal
+         */
+        public Node<K> last(){
+            Node<K> n = this;
+            while(n.right != null){
+                n = n.right;
+            }
+            return n;
         }
 
         /**
@@ -114,8 +139,41 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
          */
         @Override
         public Location<K> next() {
-            return null;  // delete this line and add your code
+            if(this.right != null){
+                return this.right.first();
+            }
+            else{
+                return this.nextAncestor();
+            }
         }
+
+        /**
+         * helper function for next()
+         *
+         * @return the Node<K> that is the next ancestor wrt. inorder traversal
+         */
+        public Node<K> nextAncestor(){
+            Node<K> n = this;
+            while(n.parent != null && n == n.parent.right){
+                n = n.parent;
+            }
+            return n.parent;
+        }
+
+        /**
+         * helper function for next()
+         *
+         * @return the first Node<K> of the subtree wrt. inorder traversal
+         */
+        public Node<K> first(){
+            Node<K> n = this;
+            while(n.left != null){
+                n = n.left;
+            }
+            return n;
+        }
+
+
 
         public boolean isAVL() {
             int h1, h2;
@@ -186,7 +244,7 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
      * Returns the height of this tree. Runs in O(1) time!
      */
     public int height() {
-        return 0;  // delete this line and add your code
+        return root.height;
     }
 
     /**
@@ -195,7 +253,7 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
      * Clears all the keys from this tree. Runs in O(1) time!
      */
     public void clear() {
-        // delete this line and add your code
+        remove(root.data); //maybe real. i think :)
     }
 
     /**
@@ -221,7 +279,28 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
      * Node<K> containing the key), or null if the key is already present.
      */
     public Node<K> insert(K key) {
-        return null;  // delete this line and add your code
+        if(contains(key)){
+            return null;
+        }
+
+        return insertHelper(key, root);
+    }
+
+    protected Node<K> insertHelper(K key, Node<K> curr){
+        if(curr == null){
+            return new Node<>(key, null, null);
+        }
+        else if(lessThan.test(key, curr.data)){
+            curr.left = insertHelper(key, curr.left);
+            return curr;
+        }
+        else if(lessThan.test(curr.data, key)){
+            curr.right = insertHelper(key, curr.right);
+            return curr;
+        }
+        else{
+            return curr;
+        }
     }
 
     /**
@@ -246,7 +325,44 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
      * nothing happens.
      */
     public void remove(K key) {
-        // delete this line and add your code
+        if(!contains(key)){
+            root = removeHelper(root, key);
+        }
+    }
+
+    /**
+     * Helper function for remove()
+     *
+     * @param curr
+     * @param key
+     * @return Node<K>
+     */
+    private Node<K> removeHelper(Node<K> curr, K key){
+        if(curr == null){
+            return null;
+        }
+        else if(lessThan.test(key, curr.data)){
+            curr.left = removeHelper(curr.left, key);
+            return curr;
+        }
+        else if(lessThan.test(curr.data, key)){
+            curr.right = removeHelper(curr.right, key);
+            return curr;
+        }
+        else{
+            if(curr.left == null){
+                return curr.right;
+            }
+            else if(curr.right == null){
+                return curr.left;
+            }
+            else{
+                Node<K> min = curr.right.first();
+                curr.data = min.data;
+                curr.right = removeHelper(curr.right, min.data);
+                return curr;
+            }
+        }
     }
 
     /**
