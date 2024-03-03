@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiPredicate;
 
@@ -37,6 +39,9 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
             this.data = data;
             this.left = left;
             this.right = right;
+            parent = null;
+            height = 0;
+            updateHeight();
         }
 
         /*
@@ -157,6 +162,7 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
             while(n.parent != null && n == n.parent.right){
                 n = n.parent;
             }
+            System.out.println("N.parent: " + n);
             return n.parent;
         }
 
@@ -170,6 +176,7 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
             while(n.left != null){
                 n = n.left;
             }
+            System.out.println("N: " + n);
             return n;
         }
 
@@ -220,7 +227,7 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
     }
 
     /*
-      find() is a helper function for search() ^^
+     * find() is a helper function for search() ^^
      */
 
     protected Node<K> find(K key, Node<K> curr, Node<K> parent){
@@ -282,7 +289,12 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
         if(contains(key)){
             return null;
         }
-
+        if(root == null){
+            root = new Node<K>(key);
+            numNodes++;
+            return root;
+        }
+        numNodes++;
         return insertHelper(key, root);
     }
 
@@ -325,7 +337,7 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
      * nothing happens.
      */
     public void remove(K key) {
-        if(!contains(key)){
+        if(contains(key)){
             root = removeHelper(root, key);
         }
     }
@@ -369,7 +381,18 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
      * TODO * <p> * Returns a sorted list of all the keys in this tree.
      */
     public List<K> keys() {
-        return null;  // delete this line and add your code
+        List<K> sortedList = new LinkedList<>();
+        if(root == null){
+            return sortedList;
+        }
+        Location<K> curr = root.first();
+        for(int i = 0; i < numNodes; i++){
+            if(curr != null){
+                sortedList.add(curr.get());
+                curr = curr.next();
+            }
+        }
+        return sortedList;
     }
 
     static private <K> String toStringPreorder(Node<K> p) {
