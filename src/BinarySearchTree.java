@@ -67,31 +67,35 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
          * actually changed. This function *must* run in O(1) time.
          */
         protected boolean updateHeight() {
-            /*
-             * added if statements to check if height needs changed at all i think?
-             * should work how i think they do
-             */
 
-            if(this.left != null){
-                if(this.right != null){
-                    if(this.height == this.right.height - 1){
-                        return false;
-                    }
-                    if(this.left.height > this.right.height){
-                        this.height = this.left.height + 1;
-                        return true;
-                    }
-                    this.height = this.right.height + 1;
-                    return true;
+            if(this.left == null && this.right == null){
+                if(this.height == 0){
+                    return false;
                 }
-                if(this.height == this.left.height - 1){
+                this.height = 0;
+                return true;
+            }
+
+            if(this.left == null){
+                if(this.height == this.right.height + 1){
+                    return false;
+                }
+                this.height = this.right.height + 1;
+                return true;
+            }
+            if(this.right == null){
+                if(this.height == this.left.height + 1){
                     return false;
                 }
                 this.height = this.left.height + 1;
                 return true;
             }
-
-            return false;
+            int maxHeight = Math.max(this.left.height, this.right.height);
+            if(this.height == maxHeight + 1){
+                return false;
+            }
+            this.height = maxHeight + 1;
+            return true;
         }
 
         /**
@@ -304,10 +308,14 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
         }
         else if(lessThan.test(key, curr.data)){
             curr.left = insertHelper(key, curr.left);
+            curr.left.parent = curr;
+            curr.updateHeight();
             return curr;
         }
         else if(lessThan.test(curr.data, key)){
             curr.right = insertHelper(key, curr.right);
+            curr.right.parent = curr;
+            curr.updateHeight();
             return curr;
         }
         else{
@@ -339,14 +347,15 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
     public void remove(K key) {
         if(contains(key)){
             root = removeHelper(root, key);
+            numNodes--;
         }
     }
 
     /**
      * Helper function for remove()
      *
-     * @param curr
-     * @param key
+     * @param curr Node<K></K>
+     * @param key K
      * @return Node<K>
      */
     private Node<K> removeHelper(Node<K> curr, K key){
@@ -355,23 +364,28 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
         }
         else if(lessThan.test(key, curr.data)){
             curr.left = removeHelper(curr.left, key);
+            curr.updateHeight();
             return curr;
         }
         else if(lessThan.test(curr.data, key)){
             curr.right = removeHelper(curr.right, key);
+            curr.updateHeight();
             return curr;
         }
         else{
             if(curr.left == null){
+                curr.right.parent = curr.parent;
                 return curr.right;
             }
             else if(curr.right == null){
+                curr.left.parent = curr.parent;
                 return curr.left;
             }
             else{
                 Node<K> min = curr.right.first();
                 curr.data = min.data;
                 curr.right = removeHelper(curr.right, min.data);
+                curr.updateHeight();
                 return curr;
             }
         }

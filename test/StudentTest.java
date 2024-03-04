@@ -69,8 +69,6 @@ public class StudentTest {
         for (Integer key : a) {
             bst.insert(key);
             map.put(key, key);
-            /*System.out.println(bst);
-            System.out.println(map);*/
         }
 
         map.remove(4);

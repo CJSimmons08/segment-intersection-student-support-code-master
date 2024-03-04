@@ -34,7 +34,9 @@ public class AVLTree<K> extends BinarySearchTree<K> {
      * maintained.
      */
     public Node insert(K key) {
-        return null;  // delete this line and add your code
+        Node<K> savedNode = super.insert(key);
+        balanceTree(savedNode);
+        return savedNode;
     }
 
     /**
@@ -44,7 +46,51 @@ public class AVLTree<K> extends BinarySearchTree<K> {
      * nothing happens.
      */
     public void remove(K key) {
-        // delete this line and add your code
+        super.remove(key);
+    }
+
+    protected void balanceTree(Node<K> node){
+        if(node == null){
+            return;
+        }
+        if(Math.abs(node.left.height - node.right.height) <= 1){
+            balanceTree(node.parent);
+            return;
+        }
+        Node<K> parentNode = node.parent;
+        if(node.left.height <= node.right.height){
+            if(node.right.left.height <= node.right.right.height){
+                leftRotate(node);
+            }
+            if(node.right.left.height > node.right.right.height){
+                rightRotate(node.right);
+                leftRotate(node);
+            }
+        }
+        else{
+            if(node.left.left.height < node.left.right.height){
+                leftRotate(node.left);
+                rightRotate(node);
+            }
+            if(node.left.left.height >= node.left.right.height){
+                rightRotate(node);
+            }
+        }
+        balanceTree(parentNode);
+    }
+
+    protected void leftRotate(Node<K> node){
+        node.right.parent = node.parent;
+        node.parent = node.right;
+        node.right = node.parent.left;
+        node.parent.left = node;
+    }
+
+    protected void rightRotate(Node<K> node){
+        node.left.parent = node.parent;
+        node.parent = node.left;
+        node.left = node.parent.right;
+        node.parent.right = node;
     }
 
 }
