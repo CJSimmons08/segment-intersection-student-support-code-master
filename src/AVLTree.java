@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.function.BiPredicate;
 
 /**
@@ -34,6 +36,7 @@ public class AVLTree<K> extends BinarySearchTree<K> {
      * maintained.
      */
     public Node insert(K key) {
+        System.out.println("Key: " + key);
         Node<K> savedNode = super.insert(key);
         balanceTree(savedNode);
         return savedNode;
@@ -47,32 +50,49 @@ public class AVLTree<K> extends BinarySearchTree<K> {
      */
     public void remove(K key) {
         super.remove(key);
+        balanceTree(lowestInvalidNode(root));
+    }
+
+    protected Node<K> lowestInvalidNode(Node<K> node){
+        if(node == null){
+            return null;
+        }
+        Queue<Node<K>> queue = new LinkedList<>();
+        queue.add(node);
+        Node<K> lowestInvalidNode = null;
+        while(!queue.isEmpty()){
+            Node<K> curr = queue.poll();
+            if(!curr.isAVL()){
+                lowestInvalidNode = curr;
+            }
+        }
+        return lowestInvalidNode;
     }
 
     protected void balanceTree(Node<K> node){
         if(node == null){
             return;
         }
-        if(Math.abs(node.left.height - node.right.height) <= 1){
+        if(node.isAVL()){
             balanceTree(node.parent);
             return;
         }
         Node<K> parentNode = node.parent;
-        if(node.left.height <= node.right.height){
-            if(node.right.left.height <= node.right.right.height){
+        if(get_height(node.left) <= get_height(node.right)){
+            if(get_height(node.right.left) <= get_height(node.right.right)){
                 leftRotate(node);
             }
-            if(node.right.left.height > node.right.right.height){
+            if(get_height(node.right.left) > get_height(node.right.right)){
                 rightRotate(node.right);
                 leftRotate(node);
             }
         }
         else{
-            if(node.left.left.height < node.left.right.height){
+            if(get_height(node.left.left) < get_height(node.left.right)){
                 leftRotate(node.left);
                 rightRotate(node);
             }
-            if(node.left.left.height >= node.left.right.height){
+            if(get_height(node.left.left) >= get_height(node.left.right)){
                 rightRotate(node);
             }
         }

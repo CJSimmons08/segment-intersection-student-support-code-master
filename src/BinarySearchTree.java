@@ -166,7 +166,6 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
             while(n.parent != null && n == n.parent.right){
                 n = n.parent;
             }
-            System.out.println("N.parent: " + n);
             return n.parent;
         }
 
@@ -180,7 +179,6 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
             while(n.left != null){
                 n = n.left;
             }
-            System.out.println("N: " + n);
             return n;
         }
 

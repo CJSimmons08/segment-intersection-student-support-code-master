@@ -31,6 +31,20 @@ public class StudentTest {
     }
 
     @Test
+    public void insertBigBST() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>((Integer x, Integer y) -> x < y);
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        int[] a = new int[]{4, 8, 0, 2, 6, 10, 12, 20, 16, 29, 19, 13, 25, 27, 14, 26, 39, 40, 65};
+        for (Integer key : a) {
+            bst.insert(key);
+            map.put(key, key);
+        }
+        for (int i = 0; i != 11; ++i) {
+            assertEquals(bst.contains(i), map.containsKey(i));
+        }
+    }
+
+    @Test
     public void testKeys() {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>((Integer x, Integer y) -> x < y);
         List<Integer> checkList = new LinkedList<Integer>();
@@ -82,14 +96,71 @@ public class StudentTest {
         }
     }
 
+    @Test
+    public void testAVLSmallInsert(){
+        AVLTree<Integer> avlTree = new AVLTree<>((Integer x, Integer y) -> x < y);
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        int[] a = new int[]{4, 8, 0, 2, 6, 10};
+        for (Integer key : a) {
+            avlTree.insert(key);
+            map.put(key, key);
+        }
+        for (int i = 0; i != 11; ++i) {
+            assertEquals(avlTree.contains(i), map.containsKey(i));
+        }
+    }
+
+    @Test
+    public void testAVLBigInsert(){
+        AVLTree<Integer> avlTree = new AVLTree<>((Integer x, Integer y) -> x < y);
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        int[] a = new int[]{4, 8, 0, 2, 6, 10, 12, 20, 16, 29, 19, 13, 25, 27, 14, 26, 39, 40, 65};
+        for (Integer key : a) {
+            avlTree.insert(key);
+            map.put(key, key);
+        }
+        for (int i = 0; i != 11; ++i) {
+            assertEquals(avlTree.contains(i), map.containsKey(i));
+        }
+    }
+
+    @Test
+    public void testAVLBalanceSmall(){
+        AVLTree<Integer> avlTree = new AVLTree<>((Integer x, Integer y) -> x < y);
+        int[] a = new int[]{4, 8, 0, 2, 6, 10};
+        for (Integer key : a) {
+            avlTree.insert(key);
+        }
+        for (int i = 0; i != 11; ++i) {
+            assertTrue(avlTree.isAVL());
+        }
+    }
+
+    @Test
+    public void testAVLBalanceBig(){
+        AVLTree<Integer> avlTree = new AVLTree<>((Integer x, Integer y) -> x < y);
+        int[] a = new int[]{4, 8, 0, 2, 6, 10, 12, 20, 16, 29, 19, 13, 25, 27, 14, 26, 39, 40, 65};
+        for (Integer key : a) {
+            avlTree.insert(key);
+        }
+        for (int i = 0; i != 11; ++i) {
+            assertTrue(avlTree.isAVL());
+        }
+    }
+
     /**
      * TODO: Test cases
      */
     @Test
     public void test() {
         insertSmallBST();
-        // your tests go here
+        insertBigBST();
         testKeys();
+        testRemove();
+        testAVLSmallInsert();
+        testAVLBigInsert();
+        testAVLBalanceSmall();
+        testAVLBalanceBig();
     }
 
 }
