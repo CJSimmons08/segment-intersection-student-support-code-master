@@ -59,8 +59,6 @@ public class StudentTest {
         checkList.add(6);
         checkList.add(8);
         checkList.add(10);
-        System.out.println("BST:" + bst);
-        System.out.println("Keys: " + bst.keys());
         List<Integer> list = bst.keys();
         for (int i = 0; i != checkList.size(); ++i) {
             assertEquals(checkList.get(i), list.get(i));
@@ -119,7 +117,7 @@ public class StudentTest {
             avlTree.insert(key);
             map.put(key, key);
         }
-        for (int i = 0; i != 11; ++i) {
+        for (int i = 0; i != 66; ++i) {
             assertEquals(avlTree.contains(i), map.containsKey(i));
         }
     }

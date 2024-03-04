@@ -1,6 +1,4 @@
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.function.BiPredicate;
 
@@ -36,9 +34,10 @@ public class AVLTree<K> extends BinarySearchTree<K> {
      * maintained.
      */
     public Node insert(K key) {
-        System.out.println("Key: " + key);
         Node<K> savedNode = super.insert(key);
-        balanceTree(savedNode);
+        if(!root.isAVL()){
+            balanceTree(savedNode);
+        }
         return savedNode;
     }
 
@@ -73,6 +72,7 @@ public class AVLTree<K> extends BinarySearchTree<K> {
         if(node == null){
             return;
         }
+        node.updateHeight();
         if(node.isAVL()){
             balanceTree(node.parent);
             return;
@@ -81,19 +81,25 @@ public class AVLTree<K> extends BinarySearchTree<K> {
         if(get_height(node.left) <= get_height(node.right)){
             if(get_height(node.right.left) <= get_height(node.right.right)){
                 leftRotate(node);
+                node.updateHeight();
             }
-            if(get_height(node.right.left) > get_height(node.right.right)){
+            else if(get_height(node.right.left) > get_height(node.right.right)){
                 rightRotate(node.right);
+                node.right.updateHeight();
                 leftRotate(node);
+                node.updateHeight();
             }
         }
         else{
             if(get_height(node.left.left) < get_height(node.left.right)){
                 leftRotate(node.left);
+                node.left.updateHeight();
                 rightRotate(node);
+                node.updateHeight();
             }
-            if(get_height(node.left.left) >= get_height(node.left.right)){
+            else if(get_height(node.left.left) >= get_height(node.left.right)){
                 rightRotate(node);
+                node.updateHeight();
             }
         }
         balanceTree(parentNode);
@@ -101,6 +107,17 @@ public class AVLTree<K> extends BinarySearchTree<K> {
 
     protected void leftRotate(Node<K> node){
         node.right.parent = node.parent;
+        if(node.parent != null){
+            if(node == node.parent.right){
+                node.parent.right = node.right;
+            }
+            else{
+                node.parent.left = node.right;
+            }
+        }
+        else{
+            this.root = node.right;
+        }
         node.parent = node.right;
         node.right = node.parent.left;
         node.parent.left = node;
@@ -108,9 +125,21 @@ public class AVLTree<K> extends BinarySearchTree<K> {
 
     protected void rightRotate(Node<K> node){
         node.left.parent = node.parent;
+        if(node.parent != null){
+            if(node == node.parent.left){
+                node.parent.left = node.left;
+            }
+            else{
+                node.parent.right = node.left;
+            }
+        }
+        else{
+            this.root = node.left;
+        }
         node.parent = node.left;
         node.left = node.parent.right;
         node.parent.right = node;
+
     }
 
 }

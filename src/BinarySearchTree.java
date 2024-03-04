@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -297,7 +296,8 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
             return root;
         }
         numNodes++;
-        return insertHelper(key, root);
+        insertHelper(key, root);
+        return search(key);
     }
 
     protected Node<K> insertHelper(K key, Node<K> curr){
@@ -372,7 +372,9 @@ public class BinarySearchTree<K> implements OrderedSet<K> {
         }
         else{
             if(curr.left == null){
-                curr.right.parent = curr.parent;
+                if(curr.right != null){
+                    curr.right.parent = curr.parent;
+                }
                 return curr.right;
             }
             else if(curr.right == null){
